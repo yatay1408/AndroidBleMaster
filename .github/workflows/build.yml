@@ -6,28 +6,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Get Date
-        id: get-date
-        run: echo "::set-output name=date::$(/bin/date -u '+%Y%m%d')"
-        shell: bash
-
-      - name: Cache Buildozer global directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer_global
-          key: buildozer-global-${{ hashFiles('buildozer.spec') }}
-
-      - name: Cache Buildozer directory
-        uses: actions/cache@v2
-        with:
-          path: .buildozer
-          key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-${{ hashFiles('buildozer.spec') }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -36,25 +19,24 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y python3-setuptools python3-pip python3-dev build-essential \
-                              libssl-dev libffi-dev libsqlite3-dev libgstreamer1.0-dev \
-                              gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
-                              gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
-                              gstreamer1.0-libav gstreamer1.0-tools \
-                              gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-pulseaudio \
-                              gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 \
-                              gstreamer1.0-pipewire
+          sudo apt-get update
+          sudo apt-get install -y python3-setuptools python3-pip python3-dev build-essential \
+                                  libssl-dev libffi-dev libsqlite3-dev libgstreamer1.0-dev \
+                                  gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+                                  gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+                                  gstreamer1.0-libav gstreamer1.0-tools \
+                                  gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-pulseaudio \
+                                  gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 \
+                                  gstreamer1.0-pipewire wget unzip openjdk-8-jdk
           pip install --upgrade pip
           pip install buildozer cython
 
       - name: Install Android SDK
         run: |
-          apt-get install -y wget unzip openjdk-8-jdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
           mkdir -p android-sdk/cmdline-tools
-          unzip commandlinetools-linux-6858069_latest.zip -d android-sdk/cmdline-tools
-          yes | android-sdk/cmdline-tools/bin/sdkmanager --sdk_root=android-sdk "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+          unzip -q commandlinetools-linux-6858069_latest.zip -d android-sdk/cmdline-tools
+          yes | android-sdk/cmdline-tools/cmdline-tools/bin/sdkmanager --sdk_root=android-sdk "platform-tools" "platforms;android-29" "build-tools;29.0.3"
         env:
           ANDROID_HOME: ${{ github.workspace }}/android-sdk
           ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
@@ -79,7 +61,6 @@ jobs:
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
         with:
           command: android debug
           buildozer_version: stable
