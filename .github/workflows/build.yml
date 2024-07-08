@@ -8,10 +8,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Set up JDK 1.8
+      - name: Set up JDK 11
         uses: actions/setup-java@v1
         with:
-          java-version: 1.8
+          java-version: 11
 
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y python3 python3-pip unzip
@@ -34,6 +34,15 @@ jobs:
           echo "PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/platform-tools" >> $GITHUB_ENV
           echo "PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/build-tools/30.0.3" >> $GITHUB_ENV
           source $GITHUB_ENV
+
+      - name: Add JAXB dependencies
+        run: |
+          mkdir -p $HOME/.m2/repository/javax/xml/bind
+          cd $HOME/.m2/repository/javax/xml/bind
+          wget https://repo1.maven.org/maven2/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar
+          wget https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-core/2.3.0/jaxb-core-2.3.0.jar
+          wget https://repo1.maven.org/maven2/com/sun/xml/bind/jaxb-impl/2.3.0/jaxb-impl-2.3.0.jar
+          wget https://repo1.maven.org/maven2/javax/activation/activation/1.1/activation-1.1.jar
 
       - name: Build APK
         uses: digreatbrian/buildozer-action@v1
