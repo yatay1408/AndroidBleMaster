@@ -63,10 +63,11 @@ jobs:
         mkdir -p android-sdk/cmdline-tools/latest
         mv android-sdk-temp/cmdline-tools/* android-sdk/cmdline-tools/latest
         echo "ANDROID_SDK_ROOT=$PWD/android-sdk" >> $GITHUB_ENV
-        echo "sdkmanager --install \"platforms;android-30\" \"build-tools;35.0.0\"" > accept-licenses.sh
-        yes | sdkmanager --licenses
-        chmod +x accept-licenses.sh
-        yes | ./accept-licenses.sh
+        echo "PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+        export ANDROID_SDK_ROOT=$PWD/android-sdk
+        export PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PATH
+        yes | sdkmanager --licenses || true
+        sdkmanager "platforms;android-30" "build-tools;35.0.0"
       shell: bash
 
     - name: Build with Buildozer
