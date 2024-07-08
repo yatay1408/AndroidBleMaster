@@ -36,8 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y python3-setuptools python3-pip python3-dev build-essential \
+          apt-get update
+          apt-get install -y python3-setuptools python3-pip python3-dev build-essential \
                               libssl-dev libffi-dev libsqlite3-dev libgstreamer1.0-dev \
                               gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
                               gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
@@ -50,7 +50,7 @@ jobs:
 
       - name: Install Android SDK
         run: |
-          sudo apt-get install -y wget unzip openjdk-8-jdk
+          apt-get install -y wget unzip openjdk-8-jdk
           wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip
           mkdir -p android-sdk/cmdline-tools
           unzip commandlinetools-linux-6858069_latest.zip -d android-sdk/cmdline-tools
