@@ -56,6 +56,16 @@ jobs:
         fi
       shell: bash
 
+    - name: Install Android SDK
+      run: |
+        wget -q "https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip" -O commandlinetools.zip
+        unzip -q commandlinetools.zip -d android-sdk
+        echo "ANDROID_SDK_ROOT=$PWD/android-sdk" >> $GITHUB_ENV
+        export PATH=$PATH:$PWD/android-sdk/cmdline-tools/bin
+        yes | sdkmanager --licenses
+        sdkmanager "platforms;android-30" "build-tools;35.0.0"
+      shell: bash
+
     - name: Build with Buildozer
       run: buildozer -v android debug
       shell: bash
