@@ -12,7 +12,7 @@ jobs:
       - name: Set up Docker environment
         run: |
           docker pull kivy/buildozer
-          docker run --rm -v $PWD:/home/user/hostcwd -w /home/user/hostcwd kivy/buildozer buildozer -v android debug
+          docker run --rm -v $PWD:/home/user/hostcwd -w /home/user/hostcwd kivy/buildozer /bin/sh -c "buildozer -v android debug"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
